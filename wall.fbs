@@ -1,0 +1,16 @@
+namespace mj2.schema;
+
+table Comment
+{
+	rltTime: int;
+	userId: string;
+	content: string;
+}
+
+table Wall
+{
+	movieId: int;
+	comments: [Comment];
+}
+
+root_type Wall;
