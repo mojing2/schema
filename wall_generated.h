@@ -11,17 +11,15 @@ namespace schema {
 
 struct Comment;
 
+struct SimulComments;
+
 struct Wall;
 
 struct Comment FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum {
-    VT_RLTTIME = 4,
-    VT_USERID = 6,
-    VT_CONTENT = 8
+    VT_USERID = 4,
+    VT_CONTENT = 6
   };
-  int32_t rltTime() const {
-    return GetField<int32_t>(VT_RLTTIME, 0);
-  }
   const flatbuffers::String *userId() const {
     return GetPointer<const flatbuffers::String *>(VT_USERID);
   }
@@ -30,7 +28,6 @@ struct Comment FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<int32_t>(verifier, VT_RLTTIME) &&
            VerifyOffset(verifier, VT_USERID) &&
            verifier.Verify(userId()) &&
            VerifyOffset(verifier, VT_CONTENT) &&
@@ -42,9 +39,6 @@ struct Comment FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
 struct CommentBuilder {
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
-  void add_rltTime(int32_t rltTime) {
-    fbb_.AddElement<int32_t>(Comment::VT_RLTTIME, rltTime, 0);
-  }
   void add_userId(flatbuffers::Offset<flatbuffers::String> userId) {
     fbb_.AddOffset(Comment::VT_USERID, userId);
   }
@@ -57,7 +51,7 @@ struct CommentBuilder {
   }
   CommentBuilder &operator=(const CommentBuilder &);
   flatbuffers::Offset<Comment> Finish() {
-    const auto end = fbb_.EndTable(start_, 3);
+    const auto end = fbb_.EndTable(start_, 2);
     auto o = flatbuffers::Offset<Comment>(end);
     return o;
   }
@@ -65,45 +59,108 @@ struct CommentBuilder {
 
 inline flatbuffers::Offset<Comment> CreateComment(
     flatbuffers::FlatBufferBuilder &_fbb,
-    int32_t rltTime = 0,
     flatbuffers::Offset<flatbuffers::String> userId = 0,
     flatbuffers::Offset<flatbuffers::String> content = 0) {
   CommentBuilder builder_(_fbb);
   builder_.add_content(content);
   builder_.add_userId(userId);
-  builder_.add_rltTime(rltTime);
   return builder_.Finish();
 }
 
 inline flatbuffers::Offset<Comment> CreateCommentDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
-    int32_t rltTime = 0,
     const char *userId = nullptr,
     const char *content = nullptr) {
   return mj2::schema::CreateComment(
       _fbb,
-      rltTime,
       userId ? _fbb.CreateString(userId) : 0,
       content ? _fbb.CreateString(content) : 0);
 }
 
-struct Wall FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+struct SimulComments FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum {
-    VT_MOVIEID = 4,
+    VT_RLTTIME = 4,
     VT_COMMENTS = 6
   };
-  int32_t movieId() const {
-    return GetField<int32_t>(VT_MOVIEID, 0);
+  int32_t rltTime() const {
+    return GetField<int32_t>(VT_RLTTIME, 0);
   }
   const flatbuffers::Vector<flatbuffers::Offset<Comment>> *comments() const {
     return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<Comment>> *>(VT_COMMENTS);
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<int32_t>(verifier, VT_MOVIEID) &&
+           VerifyField<int32_t>(verifier, VT_RLTTIME) &&
            VerifyOffset(verifier, VT_COMMENTS) &&
            verifier.Verify(comments()) &&
            verifier.VerifyVectorOfTables(comments()) &&
+           verifier.EndTable();
+  }
+};
+
+struct SimulCommentsBuilder {
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_rltTime(int32_t rltTime) {
+    fbb_.AddElement<int32_t>(SimulComments::VT_RLTTIME, rltTime, 0);
+  }
+  void add_comments(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Comment>>> comments) {
+    fbb_.AddOffset(SimulComments::VT_COMMENTS, comments);
+  }
+  SimulCommentsBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  SimulCommentsBuilder &operator=(const SimulCommentsBuilder &);
+  flatbuffers::Offset<SimulComments> Finish() {
+    const auto end = fbb_.EndTable(start_, 2);
+    auto o = flatbuffers::Offset<SimulComments>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<SimulComments> CreateSimulComments(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    int32_t rltTime = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Comment>>> comments = 0) {
+  SimulCommentsBuilder builder_(_fbb);
+  builder_.add_comments(comments);
+  builder_.add_rltTime(rltTime);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<SimulComments> CreateSimulCommentsDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    int32_t rltTime = 0,
+    const std::vector<flatbuffers::Offset<Comment>> *comments = nullptr) {
+  return mj2::schema::CreateSimulComments(
+      _fbb,
+      rltTime,
+      comments ? _fbb.CreateVector<flatbuffers::Offset<Comment>>(*comments) : 0);
+}
+
+struct Wall FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  enum {
+    VT_MOVIEID = 4,
+    VT_MOVIELENGTH = 6,
+    VT_SIMULCOMMENTSARRAY = 8
+  };
+  int32_t movieId() const {
+    return GetField<int32_t>(VT_MOVIEID, 0);
+  }
+  int32_t movieLength() const {
+    return GetField<int32_t>(VT_MOVIELENGTH, 0);
+  }
+  const flatbuffers::Vector<flatbuffers::Offset<SimulComments>> *simulCommentsArray() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<SimulComments>> *>(VT_SIMULCOMMENTSARRAY);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int32_t>(verifier, VT_MOVIEID) &&
+           VerifyField<int32_t>(verifier, VT_MOVIELENGTH) &&
+           VerifyOffset(verifier, VT_SIMULCOMMENTSARRAY) &&
+           verifier.Verify(simulCommentsArray()) &&
+           verifier.VerifyVectorOfTables(simulCommentsArray()) &&
            verifier.EndTable();
   }
 };
@@ -114,8 +171,11 @@ struct WallBuilder {
   void add_movieId(int32_t movieId) {
     fbb_.AddElement<int32_t>(Wall::VT_MOVIEID, movieId, 0);
   }
-  void add_comments(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Comment>>> comments) {
-    fbb_.AddOffset(Wall::VT_COMMENTS, comments);
+  void add_movieLength(int32_t movieLength) {
+    fbb_.AddElement<int32_t>(Wall::VT_MOVIELENGTH, movieLength, 0);
+  }
+  void add_simulCommentsArray(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<SimulComments>>> simulCommentsArray) {
+    fbb_.AddOffset(Wall::VT_SIMULCOMMENTSARRAY, simulCommentsArray);
   }
   WallBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -123,7 +183,7 @@ struct WallBuilder {
   }
   WallBuilder &operator=(const WallBuilder &);
   flatbuffers::Offset<Wall> Finish() {
-    const auto end = fbb_.EndTable(start_, 2);
+    const auto end = fbb_.EndTable(start_, 3);
     auto o = flatbuffers::Offset<Wall>(end);
     return o;
   }
@@ -132,9 +192,11 @@ struct WallBuilder {
 inline flatbuffers::Offset<Wall> CreateWall(
     flatbuffers::FlatBufferBuilder &_fbb,
     int32_t movieId = 0,
-    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<Comment>>> comments = 0) {
+    int32_t movieLength = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<SimulComments>>> simulCommentsArray = 0) {
   WallBuilder builder_(_fbb);
-  builder_.add_comments(comments);
+  builder_.add_simulCommentsArray(simulCommentsArray);
+  builder_.add_movieLength(movieLength);
   builder_.add_movieId(movieId);
   return builder_.Finish();
 }
@@ -142,11 +204,13 @@ inline flatbuffers::Offset<Wall> CreateWall(
 inline flatbuffers::Offset<Wall> CreateWallDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
     int32_t movieId = 0,
-    const std::vector<flatbuffers::Offset<Comment>> *comments = nullptr) {
+    int32_t movieLength = 0,
+    const std::vector<flatbuffers::Offset<SimulComments>> *simulCommentsArray = nullptr) {
   return mj2::schema::CreateWall(
       _fbb,
       movieId,
-      comments ? _fbb.CreateVector<flatbuffers::Offset<Comment>>(*comments) : 0);
+      movieLength,
+      simulCommentsArray ? _fbb.CreateVector<flatbuffers::Offset<SimulComments>>(*simulCommentsArray) : 0);
 }
 
 inline const mj2::schema::Wall *GetWall(const void *buf) {

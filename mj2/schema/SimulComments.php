@@ -8,22 +8,22 @@ use \Google\FlatBuffers\Table;
 use \Google\FlatBuffers\ByteBuffer;
 use \Google\FlatBuffers\FlatBufferBuilder;
 
-class Wall extends Table
+class SimulComments extends Table
 {
     /**
      * @param ByteBuffer $bb
-     * @return Wall
+     * @return SimulComments
      */
-    public static function getRootAsWall(ByteBuffer $bb)
+    public static function getRootAsSimulComments(ByteBuffer $bb)
     {
-        $obj = new Wall();
+        $obj = new SimulComments();
         return ($obj->init($bb->getInt($bb->getPosition()) + $bb->getPosition(), $bb));
     }
 
     /**
      * @param int $_i offset
      * @param ByteBuffer $_bb
-     * @return Wall
+     * @return SimulComments
      **/
     public function init($_i, ByteBuffer $_bb)
     {
@@ -35,37 +35,28 @@ class Wall extends Table
     /**
      * @return int
      */
-    public function getMovieId()
+    public function getRltTime()
     {
         $o = $this->__offset(4);
         return $o != 0 ? $this->bb->getInt($o + $this->bb_pos) : 0;
     }
 
     /**
-     * @return int
-     */
-    public function getMovieLength()
-    {
-        $o = $this->__offset(6);
-        return $o != 0 ? $this->bb->getInt($o + $this->bb_pos) : 0;
-    }
-
-    /**
      * @returnVectorOffset
      */
-    public function getSimulCommentsArray($j)
+    public function getComments($j)
     {
-        $o = $this->__offset(8);
-        $obj = new SimulComments();
+        $o = $this->__offset(6);
+        $obj = new Comment();
         return $o != 0 ? $obj->init($this->__indirect($this->__vector($o) + $j * 4), $this->bb) : null;
     }
 
     /**
      * @return int
      */
-    public function getSimulCommentsArrayLength()
+    public function getCommentsLength()
     {
-        $o = $this->__offset(8);
+        $o = $this->__offset(6);
         return $o != 0 ? $this->__vector_len($o) : 0;
     }
 
@@ -73,21 +64,20 @@ class Wall extends Table
      * @param FlatBufferBuilder $builder
      * @return void
      */
-    public static function startWall(FlatBufferBuilder $builder)
+    public static function startSimulComments(FlatBufferBuilder $builder)
     {
-        $builder->StartObject(3);
+        $builder->StartObject(2);
     }
 
     /**
      * @param FlatBufferBuilder $builder
-     * @return Wall
+     * @return SimulComments
      */
-    public static function createWall(FlatBufferBuilder $builder, $movieId, $movieLength, $simulCommentsArray)
+    public static function createSimulComments(FlatBufferBuilder $builder, $rltTime, $comments)
     {
-        $builder->startObject(3);
-        self::addMovieId($builder, $movieId);
-        self::addMovieLength($builder, $movieLength);
-        self::addSimulCommentsArray($builder, $simulCommentsArray);
+        $builder->startObject(2);
+        self::addRltTime($builder, $rltTime);
+        self::addComments($builder, $comments);
         $o = $builder->endObject();
         return $o;
     }
@@ -97,19 +87,9 @@ class Wall extends Table
      * @param int
      * @return void
      */
-    public static function addMovieId(FlatBufferBuilder $builder, $movieId)
+    public static function addRltTime(FlatBufferBuilder $builder, $rltTime)
     {
-        $builder->addIntX(0, $movieId, 0);
-    }
-
-    /**
-     * @param FlatBufferBuilder $builder
-     * @param int
-     * @return void
-     */
-    public static function addMovieLength(FlatBufferBuilder $builder, $movieLength)
-    {
-        $builder->addIntX(1, $movieLength, 0);
+        $builder->addIntX(0, $rltTime, 0);
     }
 
     /**
@@ -117,9 +97,9 @@ class Wall extends Table
      * @param VectorOffset
      * @return void
      */
-    public static function addSimulCommentsArray(FlatBufferBuilder $builder, $simulCommentsArray)
+    public static function addComments(FlatBufferBuilder $builder, $comments)
     {
-        $builder->addOffsetX(2, $simulCommentsArray, 0);
+        $builder->addOffsetX(1, $comments, 0);
     }
 
     /**
@@ -127,7 +107,7 @@ class Wall extends Table
      * @param array offset array
      * @return int vector offset
      */
-    public static function createSimulCommentsArrayVector(FlatBufferBuilder $builder, array $data)
+    public static function createCommentsVector(FlatBufferBuilder $builder, array $data)
     {
         $builder->startVector(4, count($data), 4);
         for ($i = count($data) - 1; $i >= 0; $i--) {
@@ -141,7 +121,7 @@ class Wall extends Table
      * @param int $numElems
      * @return void
      */
-    public static function startSimulCommentsArrayVector(FlatBufferBuilder $builder, $numElems)
+    public static function startCommentsVector(FlatBufferBuilder $builder, $numElems)
     {
         $builder->startVector(4, $numElems, 4);
     }
@@ -150,14 +130,9 @@ class Wall extends Table
      * @param FlatBufferBuilder $builder
      * @return int table offset
      */
-    public static function endWall(FlatBufferBuilder $builder)
+    public static function endSimulComments(FlatBufferBuilder $builder)
     {
         $o = $builder->endObject();
         return $o;
-    }
-
-    public static function finishWallBuffer(FlatBufferBuilder $builder, $offset)
-    {
-        $builder->finish($offset);
     }
 }

@@ -14,27 +14,23 @@ public final class Comment extends Table {
   public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; }
   public Comment __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public int rltTime() { int o = __offset(4); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
-  public String userId() { int o = __offset(6); return o != 0 ? __string(o + bb_pos) : null; }
-  public ByteBuffer userIdAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
-  public String content() { int o = __offset(8); return o != 0 ? __string(o + bb_pos) : null; }
-  public ByteBuffer contentAsByteBuffer() { return __vector_as_bytebuffer(8, 1); }
+  public String userId() { int o = __offset(4); return o != 0 ? __string(o + bb_pos) : null; }
+  public ByteBuffer userIdAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
+  public String content() { int o = __offset(6); return o != 0 ? __string(o + bb_pos) : null; }
+  public ByteBuffer contentAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
 
   public static int createComment(FlatBufferBuilder builder,
-      int rltTime,
       int userIdOffset,
       int contentOffset) {
-    builder.startObject(3);
+    builder.startObject(2);
     Comment.addContent(builder, contentOffset);
     Comment.addUserId(builder, userIdOffset);
-    Comment.addRltTime(builder, rltTime);
     return Comment.endComment(builder);
   }
 
-  public static void startComment(FlatBufferBuilder builder) { builder.startObject(3); }
-  public static void addRltTime(FlatBufferBuilder builder, int rltTime) { builder.addInt(0, rltTime, 0); }
-  public static void addUserId(FlatBufferBuilder builder, int userIdOffset) { builder.addOffset(1, userIdOffset, 0); }
-  public static void addContent(FlatBufferBuilder builder, int contentOffset) { builder.addOffset(2, contentOffset, 0); }
+  public static void startComment(FlatBufferBuilder builder) { builder.startObject(2); }
+  public static void addUserId(FlatBufferBuilder builder, int userIdOffset) { builder.addOffset(0, userIdOffset, 0); }
+  public static void addContent(FlatBufferBuilder builder, int contentOffset) { builder.addOffset(1, contentOffset, 0); }
   public static int endComment(FlatBufferBuilder builder) {
     int o = builder.endObject();
     return o;

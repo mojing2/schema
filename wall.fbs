@@ -2,15 +2,21 @@ namespace mj2.schema;
 
 table Comment
 {
-	rltTime: int;
 	userId: string;
 	content: string;
+}
+
+table SimulComments
+{
+	rltTime: int;
+	comments: [Comment];
 }
 
 table Wall
 {
 	movieId: int;
-	comments: [Comment];
+	movieLength: int;
+	simulCommentsArray: [SimulComments];
 }
 
 root_type Wall;

@@ -32,24 +32,15 @@ class Comment extends Table
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getRltTime()
-    {
-        $o = $this->__offset(4);
-        return $o != 0 ? $this->bb->getInt($o + $this->bb_pos) : 0;
-    }
-
     public function getUserId()
     {
-        $o = $this->__offset(6);
+        $o = $this->__offset(4);
         return $o != 0 ? $this->__string($o + $this->bb_pos) : null;
     }
 
     public function getContent()
     {
-        $o = $this->__offset(8);
+        $o = $this->__offset(6);
         return $o != 0 ? $this->__string($o + $this->bb_pos) : null;
     }
 
@@ -59,31 +50,20 @@ class Comment extends Table
      */
     public static function startComment(FlatBufferBuilder $builder)
     {
-        $builder->StartObject(3);
+        $builder->StartObject(2);
     }
 
     /**
      * @param FlatBufferBuilder $builder
      * @return Comment
      */
-    public static function createComment(FlatBufferBuilder $builder, $rltTime, $userId, $content)
+    public static function createComment(FlatBufferBuilder $builder, $userId, $content)
     {
-        $builder->startObject(3);
-        self::addRltTime($builder, $rltTime);
+        $builder->startObject(2);
         self::addUserId($builder, $userId);
         self::addContent($builder, $content);
         $o = $builder->endObject();
         return $o;
-    }
-
-    /**
-     * @param FlatBufferBuilder $builder
-     * @param int
-     * @return void
-     */
-    public static function addRltTime(FlatBufferBuilder $builder, $rltTime)
-    {
-        $builder->addIntX(0, $rltTime, 0);
     }
 
     /**
@@ -93,7 +73,7 @@ class Comment extends Table
      */
     public static function addUserId(FlatBufferBuilder $builder, $userId)
     {
-        $builder->addOffsetX(1, $userId, 0);
+        $builder->addOffsetX(0, $userId, 0);
     }
 
     /**
@@ -103,7 +83,7 @@ class Comment extends Table
      */
     public static function addContent(FlatBufferBuilder $builder, $content)
     {
-        $builder->addOffsetX(2, $content, 0);
+        $builder->addOffsetX(1, $content, 0);
     }
 
     /**
